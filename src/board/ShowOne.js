@@ -12,7 +12,7 @@ import Table from "react-bootstrap/Table";
 let ShowOne = () => {
     // axios 사용 - 비동기 통신
     // 게시글 id 받아오기
-    // useLocation -> 무조건 ?가 있어야 받아옴
+    // useLocation -> 무조건 ?값이 어딘가 있어야 받아옴
     // useParams -> 주소에 어딘가에 :id 를 적어주고 해당 파라미터를 받아올때 사용한다.
     let params = useParams()
     let [data, setData] = useState({})
