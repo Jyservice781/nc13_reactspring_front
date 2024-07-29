@@ -30,8 +30,8 @@ let ShowOne = () => {
                 if (resp.status === 200) {
                     setData(resp.data)
                 }
-            } catch (e) {
-                console.error(e)
+            } catch (error) {
+                console.error(error)
             }
         }
         selectOne()
