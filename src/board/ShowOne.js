@@ -1,12 +1,8 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from 'axios'
 import {useEffect, useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
-import Table from "react-bootstrap/Table";
+import {Button, Container, Table} from "react-bootstrap";
 
 
 let ShowOne = () => {
@@ -17,6 +13,12 @@ let ShowOne = () => {
     let params = useParams()
     let [data, setData] = useState({})
     let id = parseInt(params.id)
+    let navigate = useNavigate()
+    // 페이지 이동을 시킬 때 사용함 태그 형식이 아니라 함수의 형태로 이동시킬떄 사용 가능하다.
+    let goBack = () => {
+        navigate(-1)
+    }
+
 
     // ---------------------------------|     axios 사용할 거임    |-----------------------------------------
 
@@ -26,7 +28,7 @@ let ShowOne = () => {
     useEffect(() => {
         let selectOne = async () => {
             try {
-                let resp = await axios.get('http://localhost:8080/board/showOne' + id, {})
+                let resp = await axios.get('http://localhost:8080/board/showOne/' + id, {})
                 if (resp.status === 200) {
                     setData(resp.data)
                 }
@@ -39,31 +41,37 @@ let ShowOne = () => {
 
     return (
         <Container className={"mt-3"}>
-            <Row className="justify-content-center">
-                <Col xs md lg={6} style={{backgroundColor: 'white'}}>
-                    <Table striped bordered hover>
-                        <tr>
-                            <td colSpan={2}>제목: {data.title}</td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>글 번호: {data.id}</td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>작성자: {data.nickname}</td>
-                        </tr>
-                        <tr>
-                            <td>글 작성일: {data.entryDate}</td>
-                            <td>글 수정일: {data.modifyDate}</td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>내용 </td>
-                        </tr>
-                        <tr>
-                            <td>{data.content}</td>
-                        </tr>
-                    </Table>
-                </Col>
-            </Row>
+            <Table striped bordered hover>
+                <thead>
+
+                </thead>
+                <tbody>
+                <tr>
+                    <td colSpan={2}>제목: {data.title}</td>
+                </tr>
+                <tr>
+                    <td colSpan={2}>글 번호: {data.id}</td>
+                </tr>
+                <tr>
+                    <td colSpan={2}>작성자: {data.nickname}</td>
+                </tr>
+                <tr>
+                    <td>글 작성일: {data.entryDate}</td>
+                    <td>글 수정일: {data.modifyDate}</td>
+                </tr>
+                <tr>
+                    <td colSpan={2}>내용</td>
+                </tr>
+                <tr>
+                    <td colSpan={2}>{data.content}</td>
+                </tr>
+                <tr>
+                    <td colSpan={2} className={"text-center"}>
+                        <Button variant="outline-primary" onClick={goBack}>뒤로가기</Button>
+                    </td>
+                </tr>
+                </tbody>
+            </Table>
         </Container>
     )
 }

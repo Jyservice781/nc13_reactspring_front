@@ -1,15 +1,25 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Container from "react-bootstrap/Container";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Table from 'react-bootstrap/Table';
+import {PageItem, Pagination} from "react-bootstrap";
 
 
 let ShowList = () => {
     let params = useParams()
     let pageNo = params.pageNo
 
-    let [data, setData] = useState({})
+    let [data, setData] = useState({boardList: []})
+    let navigate = useNavigate()
+
+    let moveToSingle = (id) => {
+        navigate('/board/showOne/' + id)
+    }
+
+    let moveToPage = (pageNo) => {
+        navigate(`/board/showList/` + pageNo)
+    }
 
     useEffect(() => {
         let selectList = async () => {
@@ -26,33 +36,70 @@ let ShowList = () => {
                 setData(resp.data)
             }
         }
-
         selectList();
-    }, [])
+
+    }, [pageNo])
 
     return (
         <Container className={"mt-3"}>
             <Table striped bordered hover>
                 <thead>
-                    <tr>
-                        <td>글 번호</td>
-                    </tr>
+                <tr>
+                    <th>글 번호</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                </tr>
                 </thead>
-                {data.boardList?.map( b => (
-                    <TableRow board={b} />
+                <tbody>
+                {data.boardList.map(b => (
+                    <TableRow board={b} key={b.id} moveToSingle={moveToSingle}/>
                 ))}
+                <tr>
+                    <td colSpan={3} className={"text-center"}>
+                        <MyPagination startPage={data.startPage}
+                                      endPage={data.endPage}
+                                      currentPage={data.currentPage}
+                                      maxPage={data.maxPage}
+                                      moveToPage={moveToPage}
+                        />
+                    </td>
+                </tr>
+
+                </tbody>
             </Table>
         </Container>
     )
 }
 
-let TableRow = ({board}) => {
+let TableRow = ({board, moveToSingle}) => {
     return (
-        <tr>
+        <tr onClick={() => moveToSingle(board.id)}>
             <td>{board.id}</td>
             <td>{board.title}</td>
             <td>{board.nickname}</td>
         </tr>
+    )
+}
+
+let MyPagination = ({startPage, endPage, currentPage, moveToPage, maxPage}) => {
+    let items = []
+    console.log(items);
+    for (let i = startPage; i <= endPage; i++) {
+        items.push(
+            <Pagination.Item key={i} active={i === currentPage} onClick={() => moveToPage(i)}>
+                {i}
+            </Pagination.Item>
+        );
+    }
+
+    return (
+        <Pagination className={"justify-content-center"}>
+            <Pagination.First onClick={() => {moveToPage(1)}}/>
+                {items}
+            <Pagination.Last onClick={() => {moveToPage(maxPage)}}/>
+        </Pagination>
+
+
     )
 }
 
