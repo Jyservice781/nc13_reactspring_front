@@ -29,9 +29,9 @@ let ShowOne = () => {
         navigate('/board/update/' + id, {state: {userInfo: userInfo}})
     }
 
-    let onDelete = () => {
-        navigate('/board/delete/' + id)
-    }
+ /*   let onDelete = () => {
+        navigate('/board/delete' + id, {state: {userInfo: userInfo}})
+    }*/
 
 
     // ---------------------------------|     axios 사용할 거임    |-----------------------------------------
