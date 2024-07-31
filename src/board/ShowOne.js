@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios'
 import {useEffect, useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,10 +13,24 @@ let ShowOne = () => {
     let params = useParams()
     let [data, setData] = useState({})
     let id = parseInt(params.id)
+
+    // user 가 해당 location 에 userInfo 를 넣어서 해당 내용을
+    // 확인 할 수 있도록 접근을 허용함. -> security 설정값 넣고 난 이후 사용자가 접근 할 수 있는지에 대한 설정이 필요하다.
+    let location = useLocation()
+    let userInfo = location.state.userInfo
+
     let navigate = useNavigate()
     // 페이지 이동을 시킬 때 사용함 태그 형식이 아니라 함수의 형태로 이동시킬떄 사용 가능하다.
     let goBack = () => {
-        navigate(-1)
+        navigate('/board/showList/1', {state: {userInfo: userInfo}})
+    }
+
+    let onUpdate = () => {
+        navigate('/board/update/' + id, {state: {userInfo: userInfo}})
+    }
+
+    let onDelete = () => {
+        navigate('/board/delete/' + id)
     }
 
 
@@ -28,7 +42,9 @@ let ShowOne = () => {
     useEffect(() => {
         let selectOne = async () => {
             try {
-                let resp = await axios.get('http://localhost:8080/board/showOne/' + id, {})
+                let resp = await axios.get('http://localhost:8080/board/showOne/' + id, {
+                    withCredentials: true
+                })
                 if (resp.status === 200) {
                     setData(resp.data)
                 }
@@ -39,11 +55,26 @@ let ShowOne = () => {
         selectOne()
     }, [])
 
+    let onLogOut = async () => {
+        let response = await axios.post('http://localhost:8080/user/logOut', {
+           withCredentials: true
+        })
+
+        if (response.status === 200) {
+           navigate("/")
+        }
+
+    }
+
     return (
         <Container className={"mt-3"}>
             <Table striped bordered hover>
                 <thead>
-
+                <tr>
+                    <td colSpan={2} className={'text-end'}>
+                        <Button onClick={onLogOut}>로그아웃</Button>
+                    </td>
+                </tr>
                 </thead>
                 <tbody>
                 <tr>
@@ -65,6 +96,14 @@ let ShowOne = () => {
                 <tr>
                     <td colSpan={2}>{data.content}</td>
                 </tr>
+                {data.writerId === userInfo.id ?
+                    <tr>
+                        <td colSpan={2} className={'text-center'}>
+                            <Button className={'m-2'} onClick={onUpdate}>수정하기</Button>
+                            <Button>삭제하기</Button>
+                        </td>
+                    </tr>
+                    : null}
                 <tr>
                     <td colSpan={2} className={"text-center"}>
                         <Button variant="outline-primary" onClick={goBack}>뒤로가기</Button>

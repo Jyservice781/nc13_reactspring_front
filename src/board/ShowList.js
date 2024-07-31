@@ -1,12 +1,20 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Table from 'react-bootstrap/Table';
-import {PageItem, Pagination} from "react-bootstrap";
+import {Pagination} from "react-bootstrap";
 
 
 let ShowList = () => {
+    // -----------  security 설정값 -> user 정보 받아올 애임  -----------------
+    let location = useLocation()
+    let userInfo = location.state.userInfo
+
+
+    //  ---------------------------------------------------------------------
+
+
     let params = useParams()
     let pageNo = params.pageNo
 
@@ -14,21 +22,26 @@ let ShowList = () => {
     let navigate = useNavigate()
 
     let moveToSingle = (id) => {
-        navigate('/board/showOne/' + id)
+        navigate('/board/showOne/' + id, {state: {userInfo: userInfo}})
     }
 
     let moveToPage = (pageNo) => {
-        navigate(`/board/showList/` + pageNo)
+        navigate(`/board/showList/` + pageNo, {state: {userInfo: userInfo}})
     }
 
     useEffect(() => {
         let selectList = async () => {
             let resp = await axios
-                .get("http://localhost:8080/board/showList/" + pageNo, {})
+                .get("http://localhost:8080/board/showList/" + pageNo, {
+                    withCredentials: true
+
+                })
+                // boardList 에서 user 사용자의 정보를
+                // 필요로 하기 때문에 넣어준다
                 .catch((e) => {
                     // 에러 발생시에 catch 를 통해서 어떠한 행동을 할지 지정해줄 수 있다.
                     console.error(e)
-                    window.location.href = '/board/showList/1'
+                    moveToPage(1)
                 })
 
             // html 통신을 할때 문제가 없으면 200 이 나온다.
@@ -83,7 +96,6 @@ let TableRow = ({board, moveToSingle}) => {
 
 let MyPagination = ({startPage, endPage, currentPage, moveToPage, maxPage}) => {
     let items = []
-    console.log(items);
     for (let i = startPage; i <= endPage; i++) {
         items.push(
             <Pagination.Item key={i} active={i === currentPage} onClick={() => moveToPage(i)}>
@@ -94,12 +106,14 @@ let MyPagination = ({startPage, endPage, currentPage, moveToPage, maxPage}) => {
 
     return (
         <Pagination className={"justify-content-center"}>
-            <Pagination.First onClick={() => {moveToPage(1)}}/>
-                {items}
-            <Pagination.Last onClick={() => {moveToPage(maxPage)}}/>
+            <Pagination.First onClick={() => {
+                moveToPage(1)
+            }}/>
+            {items}
+            <Pagination.Last onClick={() => {
+                moveToPage(maxPage)
+            }}/>
         </Pagination>
-
-
     )
 }
 

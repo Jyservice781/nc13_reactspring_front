@@ -4,6 +4,7 @@ import ShowOne from "./board/ShowOne";
 import ShowList from "./board/ShowList";
 import Write from "./board/Write";
 import Update from "./board/Update";
+import Auth from "./user/Auth";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 <Route path="/board/showList/:pageNo" element={<ShowList />} />
                 <Route path="/board/write" element={<Write />} />
                 <Route path="/board/update/:id" element={<Update />} />
+                <Route path="/" element={<Auth />} />
             </Routes>
         </div>
     );

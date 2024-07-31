@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Button, Container, Form, FormControl, Table} from "react-bootstrap";
+import {Button, Container, FormControl, Table} from "react-bootstrap";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
@@ -27,7 +27,6 @@ let Write = () => {
         e.preventDefault()
         try {
             let resp = await axios.post("http://localhost:8080/board/write", inputs)
-            console.log(resp)
 
             if(resp.data.resultId !== undefined){
                 moveToNext(resp.data.resultId)
