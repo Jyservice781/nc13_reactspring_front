@@ -22,16 +22,23 @@ let ShowOne = () => {
     let navigate = useNavigate()
     // 페이지 이동을 시킬 때 사용함 태그 형식이 아니라 함수의 형태로 이동시킬떄 사용 가능하다.
     let goBack = () => {
-        navigate('/board/showList/1', {state: {userInfo: userInfo}})
+        navigate('/board/showList/', {state: {userInfo: userInfo,}})
     }
 
     let onUpdate = () => {
         navigate('/board/update/' + id, {state: {userInfo: userInfo}})
     }
 
- /*   let onDelete = () => {
-        navigate('/board/delete' + id, {state: {userInfo: userInfo}})
-    }*/
+    let onDelete = async () => {
+        //navigate('/board/delete' + id, {state: {userInfo: userInfo}})
+        let response = await axios.get("http://localhost:8080/board/delete/" + id, {
+            withCredentials: true
+        })
+
+        if(response.status === 200){
+            navigate('/board/showList/1', {state:{userInfo: userInfo}})
+        }
+    }
 
 
     // ---------------------------------|     axios 사용할 거임    |-----------------------------------------
@@ -63,7 +70,6 @@ let ShowOne = () => {
         if (response.status === 200) {
            navigate("/")
         }
-
     }
 
     return (
@@ -100,7 +106,7 @@ let ShowOne = () => {
                     <tr>
                         <td colSpan={2} className={'text-center'}>
                             <Button className={'m-2'} onClick={onUpdate}>수정하기</Button>
-                            <Button>삭제하기</Button>
+                            <Button onClick={onDelete}>삭제하기</Button>
                         </td>
                     </tr>
                     : null}
